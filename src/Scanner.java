@@ -70,6 +70,8 @@ public class Scanner {
                     while (peek() != '\n' && !isAtEnd()) {
                         advance();
                     }
+                } else if (match('*')) {
+                   blockComment();
                 } else {
                     addToken(TokenType.SLASH);
                 }
@@ -92,6 +94,7 @@ public class Scanner {
                 break;
         }
     }
+
 
     private boolean isAlpha(char c) {
         return (c >= 'a' && c <= 'z') ||
@@ -157,6 +160,22 @@ public class Scanner {
         // Trim surrounding quotes.
         String value = source.substring(start + 1, current - 1);
         addToken(TokenType.STRING, value);
+    }
+
+    private void blockComment() {
+        while ((peek() != '*') && (peekNext() != '/') && !isAtEnd()) {
+            if (peek() == '\n') { line++; }
+            advance();
+        }
+
+        if (isAtEnd()) {
+            // It's valid to have a non-terminated block comment.
+            return;
+        }
+
+
+        advance(); // Eat closing '*'.
+        advance();// Eat closing '/'.
     }
 
     private boolean match(char expected) {
