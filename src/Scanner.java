@@ -176,7 +176,7 @@ public class Scanner {
 
 
         advance(); // Eat closing '*'.
-        advance();// Eat closing '/'.
+        advance(); // Eat closing '/'.
     }
 
     private boolean match(char expected) {

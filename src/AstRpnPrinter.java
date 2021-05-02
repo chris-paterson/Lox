@@ -47,6 +47,7 @@ public class AstRpnPrinter implements Expr.Visitor<String> {
 
 
     public static void main(String[] args) {
+        // 1 + 2 * 4 - 3
         Expr lhs = new Expr.Grouping(
                 new Expr.Binary(
                         new Expr.Literal(1),

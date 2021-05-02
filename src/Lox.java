@@ -45,10 +45,18 @@ public class Lox {
     private static void run(String source) {
         Scanner scanner = new Scanner(source);
         List<Token> tokens = scanner.scanTokens();
+        Parser parser = new Parser(tokens);
+        Expr expression = parser.parse();
 
-        for (Token token : tokens) {
-            System.out.println(token);
-        }
+        // Stop if there's a syntax error.
+        if (hadError) return;
+        System.out.println(new AstPrinter().print(expression));
+
+        //System.out.println("TYPE | LEXEME | LITERAL");
+        //System.out.println("-----------------------");
+        //for (Token token : tokens) {
+        //    System.out.println(token);
+        //}
     }
 
 

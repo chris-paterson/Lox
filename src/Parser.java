@@ -11,6 +11,15 @@ public class Parser {
         this.tokens = tokens;
     }
 
+    Expr parse() {
+        try {
+            return expression();
+        } catch (ParseError error) {
+            return null;
+        }
+    }
+
+    // Evaluate from lowest to highest precedence.
     private Expr expression() {
         return equality();
     }
@@ -28,30 +37,32 @@ public class Parser {
     }
 
     private Expr comparison() {
-        Expr expr = addition();
+        Expr expr = term();
 
         while (match(TokenType.GREATER, TokenType.GREATER_EQUAL, TokenType.LESS, TokenType.LESS_EQUAL)) {
             Token operator = previous();
-            Expr right = addition();
+            Expr right = term();
             expr = new Expr.Binary(expr, operator, right);
         }
 
         return expr;
     }
 
-    private Expr addition() {
-        Expr expr = multiplication();
+    // Addition / Subtraction.
+    private Expr term() {
+        Expr expr = factor();
 
         while (match(TokenType.MINUS, TokenType.PLUS)) {
             Token operator = previous();
-            Expr right = multiplication();
+            Expr right = factor();
             expr = new Expr.Binary(expr, operator, right);
         }
 
         return expr;
     }
 
-    private Expr multiplication() {
+    // Multiplication / Division.
+    private Expr factor() {
         Expr expr = unary();
 
         while (match(TokenType.SLASH, TokenType.STAR)) {
@@ -90,10 +101,11 @@ public class Parser {
            return new Expr.Grouping(expr);
          }
 
-         return null;
+         throw error(peek(), "Expect expression.");
      }
 
 
+    // Consumes tokens.
     private boolean match(TokenType... types) {
         for (TokenType type : types) {
             if (check(type)) {
@@ -152,14 +164,17 @@ public class Parser {
         return previous();
     }
 
+    // See if we've run out of tokens to consume.
     private boolean isAtEnd() {
         return peek().type == TokenType.EOF;
     }
 
+    // Current token yet to be consumed.
     private Token peek() {
         return tokens.get(current);
     }
 
+    // Most recently consumed token.
     private Token previous() {
         return tokens.get(current - 1);
     }
