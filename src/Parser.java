@@ -48,6 +48,10 @@ public class Parser {
 
     private Expr equality() {
         Expr expr = comparison();
+        if (expr == null) {
+            comparison(); // Parse and discard RHS.
+            throw error(peek(), "Binary expressions should start with a left hand operand.");
+        }
 
         while (match(TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL)) {
             Token operator = previous();
@@ -60,6 +64,10 @@ public class Parser {
 
     private Expr comparison() {
         Expr expr = term();
+        if (expr == null) {
+            term(); // Parse and discard RHS.
+            throw error(peek(), "Binary expressions should start with a left hand operand.");
+        }
 
         while (match(TokenType.GREATER, TokenType.GREATER_EQUAL, TokenType.LESS, TokenType.LESS_EQUAL)) {
             Token operator = previous();
@@ -73,6 +81,10 @@ public class Parser {
     // Addition / Subtraction.
     private Expr term() {
         Expr expr = factor();
+        if (expr == null) {
+            factor(); // Parse and discard RHS.
+            throw error(peek(), "Binary expressions should start with a left hand operand.");
+        }
 
         while (match(TokenType.MINUS, TokenType.PLUS)) {
             Token operator = previous();
@@ -86,6 +98,10 @@ public class Parser {
     // Multiplication / Division.
     private Expr factor() {
         Expr expr = unary();
+        if (expr == null) {
+            unary(); // Parse and discard RHS.
+            throw error(peek(), "Binary expressions should start with a left hand operand.");
+        }
 
         while (match(TokenType.SLASH, TokenType.STAR)) {
             Token operator = previous();
@@ -123,7 +139,7 @@ public class Parser {
            return new Expr.Grouping(expr);
          }
 
-         throw error(peek(), "Expect expression.");
+         return null;
      }
 
 
