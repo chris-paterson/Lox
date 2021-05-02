@@ -19,9 +19,31 @@ public class Parser {
         }
     }
 
-    // Evaluate from lowest to highest precedence.
     private Expr expression() {
-        return equality();
+        return comma();
+    }
+
+    // Evaluate from lowest to highest precedence.
+    private Expr comma() {
+        Expr expr = ternary(); // Evaluate left and discard.
+
+        while (match(TokenType.COMMA)) {
+            expr = ternary();
+        }
+
+        return expr;
+    }
+
+    private Expr ternary() {
+        Expr expr = equality();
+
+        while (match(TokenType.QUESTION_MARK)) {
+            Expr trueExpr = expression();
+            consume(TokenType.COLON, "Expect ':' after expression.");
+            Expr falseExpr = ternary();
+            expr = new Expr.Ternary(expr, trueExpr, falseExpr);
+        }
+        return expr;
     }
 
     private Expr equality() {
