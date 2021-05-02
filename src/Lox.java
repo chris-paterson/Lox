@@ -51,12 +51,6 @@ public class Lox {
         // Stop if there's a syntax error.
         if (hadError) return;
         System.out.println(new AstPrinter().print(expression));
-
-        //System.out.println("TYPE | LEXEME | LITERAL");
-        //System.out.println("-----------------------");
-        //for (Token token : tokens) {
-        //    System.out.println(token);
-        //}
     }
 
 
