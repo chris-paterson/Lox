@@ -1,0 +1,13 @@
+var a = "before";
+print a;
+var a = "after";
+print a;
+
+
+var one = 1;
+var two = 2;
+print one + two;
+
+
+one = 2;
+print one + two;
